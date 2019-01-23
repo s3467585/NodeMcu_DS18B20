@@ -5,7 +5,7 @@
  
 // подключаем библиотеку «ESP8266WiFi»:
 #include <ESP8266WiFi.h>
-#include <OneWire.h>
+//#include <OneWire.h>
 #include <DallasTemperature.h>
  
 // вписываем здесь SSID и пароль для вашей WiFi-сети:
@@ -23,8 +23,8 @@ OneWire oneWire(ONE_WIRE_BUS);
  
 // передаем объект oneWire объекту DS18B20:
 DallasTemperature DS18B20(&oneWire);
-char temperatureCString[6];
-char temperatureFString[6];
+char temperatureCString[7];
+char temperatureFString[7];
  
 // веб-сервер на порте 80:
 WiFiServer server(80);
@@ -65,18 +65,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 }
  
-void getTemperature() {
-  float tempC;
-  float tempF;
-  do {
-    DS18B20.requestTemperatures();
-    tempC = DS18B20.getTempCByIndex(0);
-    dtostrf(tempC, 2, 2, temperatureCString);
-    tempF = DS18B20.getTempFByIndex(0);
-    dtostrf(tempF, 3, 2, temperatureFString);
-    delay(100);
-  } while (tempC == 85.0 || tempC == (-127.0));
-}
+
  
 // блок loop() будет запускаться снова и снова:
 void loop() {
@@ -101,11 +90,11 @@ void loop() {
             // веб-страница с данными о температуре:
             client.println("<!DOCTYPE HTML>");
             client.println("<html>");
-            client.println("<head><meta http-equiv=\"Refresh\" content=\"20\" /></head><body><h1>ESP8266 - Temperature</h1><h3>Temperature in Celsius: ");
+            client.println("<head><meta charset=\"utf-8\" http-equiv=\"Refresh\" content=\"20\"> <title>Уличная температура</title></head><body bgcolor=\"#E6E6FA\"><h1>Уличная температура</h1><h3>Температура в градусах Цельсия:  <span style=\"color:#B22222\">");
             client.println(temperatureCString);
-            client.println("*C</h3><h3>Temperature in Fahrenheit: ");
+            client.println("&#176C</span></h3><h3>Температура в градусах Фаренгейта: <span style=\"color:#B22222\">");    //&#176 спецсимвол HTML градусы
             client.println(temperatureFString);
-            client.println("*F</h3></body></html>");  
+            client.println("&#176F</span></h3></body></html>");  
             break;
         }
         if (c == '\n') {
