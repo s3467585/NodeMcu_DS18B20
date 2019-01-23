@@ -1,11 +1,5 @@
-/*********
-  Руи Сантос (Rui Santos)
-  Более подробно о проекте на: http://randomnerdtutorials.com  
-*********/
- 
 // подключаем библиотеку «ESP8266WiFi»:
 #include <ESP8266WiFi.h>
-//#include <OneWire.h>
 #include <DallasTemperature.h>
  
 // вписываем здесь SSID и пароль для вашей WiFi-сети:
@@ -23,6 +17,7 @@ OneWire oneWire(ONE_WIRE_BUS);
  
 // передаем объект oneWire объекту DS18B20:
 DallasTemperature DS18B20(&oneWire);
+
 char temperatureCString[7];
 char temperatureFString[7];
  
