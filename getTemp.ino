@@ -1,4 +1,4 @@
-//void getTemperature() {
+//void getTemp() {
 //  float tempC;
 //  float tempF;
 //  do {

@@ -2,66 +2,37 @@
 #include <ESP8266WiFi.h>
 #include <DallasTemperature.h>
 
-const char* host = "sovmet.000webhostapp.com";
-WiFiClient client ;
 
-const char* ssid = "My ASUS";     // вписываем SSID для вашей WiFi-сети
-const char* password = "9876543210";       // вписываем пароль для вашей WiFi-сети
+
+
+#define key1 LED_BUILTIN  // контакт1 управляемый через Web
+#define term1 5    // контакт для передачи данных подключен к D1 на ESP8266 12-E (GPIO5):
+#define host "sovmet.000webhostapp.com"   //адрес хоста sovmet.000webhostapp.com
+
+char temperatureCString[7];  // массив хранения данных температуры в градусах
+char temperatureFString[7];  // массив хранения данных температуры в фаренгейтах
  
-// контакт для передачи данных подключен к D1 на ESP8266 12-E (GPIO5):
-#define ONE_WIRE_BUS 5
- 
-// создаем экземпляр класса oneWire; с его помощью
-// можно коммуницировать с любыми девайсами, работающими
-// через интерфейс 1-Wire, а не только с температурными датчиками
-// от компании Maxim/Dallas:
-OneWire oneWire(ONE_WIRE_BUS);
+OneWire oneWire(term1); // создаем экземпляр класса oneWire; с его помощью
+                        // можно коммуницировать с любыми девайсами, работающими
+                        // через интерфейс 1-Wire, а не только с температурными датчиками
+                        // от компании Maxim/Dallas:
 DallasTemperature DS18B20(&oneWire);   // передаем объект oneWire объекту DS18B20:
 
-char temperatureCString[7];
-char temperatureFString[7];
- 
-//WiFiServer server(80);   // веб-сервер на порте 80:
- 
-// блок setup() запускается только один раз – при загрузке:
 void setup() {
-  // инициализируем последовательный порт (для отладочных целей):
-  Serial.begin(115200);
-  delay(10);
- 
+  
+  pinMode(key1 , OUTPUT); // настройка ключа1
+  digitalWrite(key1, 1);  // установка параметра ключа1 по умолчанию
+
+  serial();
   DS18B20.begin(); // по умолчанию разрешение датчика – 9-битное;
                    // если у вас какие-то проблемы, его имеет смысл
                    // поднять до 12 бит; если увеличить задержку,
                    // это даст датчику больше времени на обработку
                    // температурных данных
- 
-  // подключаемся к WiFi-сети:
-  Serial.println();
-  Serial.print("Connecting to "); // "Подключаемся к "
-  Serial.println(ssid);
- 
-  WiFi.begin(ssid, password);
- 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected"); // "Подключение к WiFi выполнено"
- 
-  // запускаем веб-сервер:
-//  server.begin();
-  Serial.println("Web server running. Waiting for the ESP IP...");
-              // "Веб-сервер запущен. Ожидание IP-адреса ESP..."
-  delay(10000);
- 
-  // печатаем IP-адрес ESP:
-  Serial.println(WiFi.localIP());
+  connectWiFi();
+  espServer();
 }
  
-
- 
-// блок loop() будет запускаться снова и снова:
 void loop() {
   
   //getTemperature();
